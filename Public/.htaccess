@@ -1,0 +1,46 @@
+
+
+#FallbackResource /app.php
+
+# Ne pas afficher la liste des répertoires si l'url correspond à un répertoire.
+Options -Indexes
+
+#Définire le gestionnaire par défaut
+DirectoryIndex index.php index.html index.htm
+
+# Ajouter l'encodage réel pour SVGZ
+AddType image/svg+xml svg svgz
+AddEncoding gzip svgz
+
+# Définissez une ressource de secours si mod_rewrite n'est pas activé. 
+# Cela permet à notre site de fonctionner sans URL propres. 
+# Cela nécessite la version Apache >= 2.2.16. Si notre site n'est pas accessible par 
+# l'URL de niveau supérieur (c'est-à-dire : http://example.com/site-exemple/ au lieu de http://example.com/), le chemin d'accès à index.php devra être ajusté.
+<IfModule !mod_rewrite.c>
+  FallbackResource /index.php
+</IfModule>
+
+# Différente règle rewrite
+<IfModule mod_rewrite.c>
+ RewriteEngine on
+
+#Pour éviter les rebondissement entre http et https
+  RewriteRule ^ - [E=protossl]
+  RewriteCond %{HTTPS} on
+  RewriteRule ^ - [E=protossl:s]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !=/favicon.ico
+  RewriteRule ^ index.php [L]
+
+
+</IfModule>
+
+# Various header fixes.
+<IfModule mod_headers.c>
+  # Disable content sniffing, since it's an attack vector.
+  Header always set X-Content-Type-Options nosniff
+  # Disable Proxy header, since it's an attack vector.
+  RequestHeader unset Proxy
+</IfModule>

@@ -1,0 +1,7 @@
+{
+    "phpcs.standard": "PSR2",
+    "phpcs.executablePath": "/home/julie/.config/composer/vendor/bin/phpcs",
+    "php.suggest.basic": false,
+    "editor.quickSuggestions": { "comments": true },
+    "phpmd.verbose": true
+}
