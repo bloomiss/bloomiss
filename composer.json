@@ -1,0 +1,34 @@
+{
+    "name": "bloomiss/bloomiss",
+    "description": "Blomiss est un cms basé sur le cms de Drupal",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "require": {
+    },
+    "replace": {
+        "symfony/polyfill-php70": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "preferred-install": "dist",
+        "autoloader-suffix": "Bloomiss9",
+        "platform": {
+            "php": "8.0.8"
+        }
+    },
+    "extra": {
+        "installer-paths": {
+            "core": ["type:bloomiss-core"]
+        }
+
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "core"
+        }
+    ]
+}
