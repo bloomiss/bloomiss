@@ -3,5 +3,22 @@
     "phpcs.executablePath": "/home/julie/.config/composer/vendor/bin/phpcs",
     "php.suggest.basic": false,
     "editor.quickSuggestions": { "comments": true },
-    "phpmd.verbose": true
+    "phpmd.verbose": true,
+    "phpmd.rules": "${workspaceFolder}/.vscode/ruleset-phpmd.xml",
+    "phpcs.ignorePatterns": [
+        "*/vendor/*"
+    ],
+    "intelephense.files.exclude": [
+        "**/.git/**",
+        "**/.svn/**",
+        "**/.hg/**",
+        "**/CVS/**",
+        "**/.DS_Store/**",
+        "**/node_modules/**",
+        "**/bower_components/**",
+        "**/vendor/**/{Tests,tests}/**",
+        "**/.history/**",
+        "**/vendor/**/vendor/**",
+        "*/vendor/*"
+    ]
 }

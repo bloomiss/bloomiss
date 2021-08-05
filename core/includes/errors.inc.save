@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * @file
+ * Fonctions pour la gestion des erreurs.
+ */
+
+namespace Bloomiss;
+
+use Exception;
+use Throwable;
+
+class BootError
+{
+    private $isFatal = false;
+
+
+
+    /**
+     * Enregistre une erreur ou une exception PHP et affiche une page d'erreur dans les cas fatals.
+     *
+     * Appelle la fonction fatal si l'excetion est fatal.
+     *
+     * @param $error    Un tableau avec les clés suivantes :
+     *                  %type, @message, %function, %file, %line,
+     *                  @backtrace_string, severity_level, backtrace, and exception
+     *
+     *                  Tous les paramètres sont en texte brut, à l'exception de @message,
+     *                  qui doit être une chaîne HTML, backtrace, qui est un backtrace PHP standard,
+     *                  et exception, qui est l'objet d'exception  (ou NULL si l'erreur n'est pas une exception ).
+     *
+     * @see fatalOn
+     */
+    public function bloomissLogError(Exception|Throwable $error)
+    {
+        var_dump([
+            'error' => $error,
+            'isFatal' => $this->isFatal,
+        ]);
+        throw new \Error('Une erreur involontaire');
+    }
+
+    public function bloomissLogErrorFatal(Exception|Throwable $error)
+    {
+        $this->isFatal = true;
+
+        $this->bloomissLogError($error);
+    }
+}

@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * Renvoie le préfixe de test s'il s'agit d'une requête interne de SimpleTest.
+ *
+ * @param string|null $newPrefix Usage interne uniquement. Un nouveau préfixe à stocker.
+ * @return string|false Renvoie soit le préfixe simpletest
+ *                      (la chaîne "simpletest" suivie d'un nombre quelconque de chiffres)
+ *                      ou FALSE si l'agent utilisateur ne contient pas de HMAC et d'horodatage valides.
+ */
+
+use Bloomiss\BootError;
+use Bloomiss\Core\Utility\Error;
+
+/*
+
+function validTestUa($request, ?string $newPrefix = null): string|false
+{
+    static $testPrefix;
+
+    if (isset($newPrefix)) {
+        $testPrefix = $newPrefix;
+    }
+
+    //   À moins que la validation ci-dessous User-Agent et HMAC ne réussisse,
+    //    nous ne sommes pas dans un environnement de test.
+    $testPrefix = false;
+
+
+    //   Une requête Simpletest valide contiendra
+    //   un code d'authentification haché et avec un salt.
+    //   Vérifiez si ce code est présent dans un cookie
+    //   ou une chaîne d'agent utilisateur personnalisé.
+    $httpUserAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : false;
+    $userAgent = isset($_SERVER['SIMPLETEST_HTTP_USER_AGENT']) ?
+        $_SERVER['SIMPLETEST_HTTP_USER_AGENT'] :
+        $httpUserAgent;
+
+    $correspondances = null;
+
+    if (isset($userAgent) && preg_match("/^simple(\w+\d+):(.+):(.+):(.+)$/", $userAgent, $correspondances)) {
+        if (isset($correspondances)) {
+            throw new Exception('bottscript:validTestUa() - Revenir dans l\'instruction 1');
+        }
+        throw new Exception('bottscript:validTestUa() - Revenir dans l\'instruction 2');
+    }
+    return $testPrefix;
+}
+*/
+
+
+
+
+
+
+/**
+ * Affiche toutes les erreurs supplémentaires détectées lors de la gestion d'une exception.
+ *
+ * @param  Exception|Throwable $exception   le premier objet Exception qui a été levé
+ * @param  Exception|Throwable $exception2  le deuxième objet Exception qui a été levé
+ */
+function bloomissExceptionHandlerAdditional(
+    Exception|Throwable $exception,
+    Exception|Throwable $exception2,
+    BootError $classError
+) {
+    // Une autre exception non interceptée a été levée lors de la gestion de la première.
+    //Si nous affichons des erreurs, alors faites-le sans qu'une autre exception non interceptée ne soit levée.
+    /*if (true) {
+
+    }*/
+    var_dump(['excpeiotn' => $exception,'excpeiotn2' => $exception2]);
+}

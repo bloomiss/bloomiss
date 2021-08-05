@@ -1,0 +1,30 @@
+{
+    "name": "bloomiss/core",
+    "description": "Ce paquet est inspiré depuis drupal/core",
+    "license": "GPL-2.0-or-later",
+    "type": "bloomiss-core",
+    "require": {
+        "php": ">=8.0.8",
+        "symfony/http-kernel" : "*",
+        "symfony/http-foundation" : "*",
+        "symfony/dependency-injection" : "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Bloomiss\\Component\\": "lib/Bloomiss/Component",
+            "Bloomiss\\Core\\": "lib/Bloomiss/Core",
+            "Bloomiss\\BootStrap\\" : "includes/class"
+        },
+        "classmap": [
+            "lib/Bloomiss.php"
+        ],
+        "files": [
+            "includes/bootstrap.inc"
+        ]
+    },   
+     "config": {
+        "preferred-install": "dist"
+    }
+}
