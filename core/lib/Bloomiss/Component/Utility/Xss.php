@@ -51,7 +51,7 @@ class Xss
      * @param array|null    $htmlTags   Un tableau de balises Html
      * @return string Une version sécurisée XSS de $string, ou une chaîne vide si $string n'est pas valide en UTF-8.
      */
-    private static function filter(string $string, ?array $htmlTags = null):string
+    public static function filter(string $string, ?array $htmlTags = null):string
     {
        
         if (is_null($htmlTags)) {

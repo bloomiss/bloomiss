@@ -1,8 +1,46 @@
 <?php
 
+use Bloomiss\BootStrap\Factory;
 use Bloomiss\BootStrap\HandleError;
-use Bloomiss\Component\Utility\Utility;
-use Bloomiss\Core\Utility\Utility as UtilityCore;
+
+function loadFactory()
+{
+    static $factory;
+    if (!isset($factory)) {
+        $factory = new Factory();
+    }
+    return $factory;
+}
+
+function bloomissLoad()
+{
+    global $bloomissVars;
+    $bloomissVars = isset($bloomissVars) ?$bloomissVars : [];
+    class_alias('Bloomiss\Bloomiss', 'Bloomiss');
+    class_alias('Bloomiss\BootStrap\HandleError', 'BloomissError');
+    $bloomissVars['config']['system.logging']['error_level'] = HandleError::ERROR_REPORTING_DISPLAY_VERBOSE;
+    //$bloomissVars['config']['system.logging']['error_level'] = HandleError::ERROR_REPORTING_DISPLAY_ALL;
+}
+
+function bloomissGetHandleError()
+{
+
+    static $handleError;
+    if (!isset($handleError)) {
+        $handleError = new HandleError();
+    }
+    return $handleError;
+}
+
+function bloomiss()
+{
+
+    static $handleError;
+    if (!isset($handleError)) {
+        $handleError = new HandleError();
+    }
+    return $handleError;
+}
 
 /**
  * Fournis un gestionnaire personnalisé pour les erreur
@@ -14,22 +52,9 @@ use Bloomiss\Core\Utility\Utility as UtilityCore;
  * @return void
  */
 
-
-function bloomissLoad()
-{
-    global $bloomissVars;
-    $bloomissVars = isset($bloomissVars) ?$bloomissVars : [];
-    class_alias('Bloomiss\Bloomiss', 'Bloomiss');
-}
-
 function bloomissErrorHandler(int $errorLevel, string $message, ?string $filename = null, ?int $line = null) : void
 {
-    static $handleError;
-    if (!isset($handleError)) {
-        $handleError = new HandleError();
-    }
-    $handleError::bloomissErrorHandlerReal($errorLevel, $message, $filename, $line);
-    //unset($handleError);
+    loadFactory()->get('handleError')::bloomissErrorHandlerReal($errorLevel, $message, $filename, $line);
 }
 
 /**
@@ -43,6 +68,7 @@ function bloomissErrorHandler(int $errorLevel, string $message, ?string $filenam
  */
 function bloomissExceptionHandler(Exception|Throwable $exception) : void
 {
+    ini_set('xdebug.show_exception_trace', '0');
   /*  require_once implode(DIRECTORY_SEPARATOR, [ __DIR__ , "errors.inc"]);
 
     $classError = new BootError();
@@ -54,5 +80,38 @@ function bloomissExceptionHandler(Exception|Throwable $exception) : void
     } catch (Throwable $error) {
         bloom*issExceptionHandlerAdditional($exception, $error, $classError);
     }*/
-    var_dump($exception);
+    try {
+        //Consignez le message au watchdog et renvoyez une page d'erreur à l'utilisateur.
+        $exceptionDecoder = loadFactory()->get('utilityError')::decodeException($exception);
+        loadFactory()->get('handleError')::fatalOn();
+        loadFactory()->get('handleError')::logError($exceptionDecoder);
+    } catch (\Throwable $error) {
+        bloomissExceptionHandlerAdditionnel($exception, $error);
+    }
+}
+
+/**
+ * Affiche toutes les erreurs supplémentaires détectées lors de la gestion d'une exception.
+ *
+ * @param \Exception|\Throwable $exception
+ *      Le premier objet d'exception qui a été levé.
+ * @param \Exception|\Throwable $exception2
+ *      Le second objet d'exception qui a été levé.
+ * @return void
+ */
+function bloomissExceptionHandlerAdditionnel($exception, $exception2)
+{
+    // Une autre exception non interceptée a été levée lors de la gestion de la première.
+    // Si nous affichons des erreurs, alors faites-le sans qu'une autre exception non interceptée ne soit levée.
+    if (loadFactory()->get('handleError')::errorDisplayable()) {
+        print '<h1>Exception non interceptée supplémentaire levée lors de la gestion de l\'exception.</h1>';
+        print sprintf(
+            '<h2>Original</h2><p>%s</p>',
+            loadFactory()->get('utilityError')::renderExceptionSafe($exception)
+        );
+        print sprintf(
+            '<h2>Additionnal</h2><p>%s</p>',
+            loadFactory()->get('utilityError')::renderExceptionSafe($exception2)
+        );
+    }
 }

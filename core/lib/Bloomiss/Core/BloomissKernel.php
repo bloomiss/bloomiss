@@ -2,12 +2,14 @@
 
 namespace Bloomiss\Core;
 
+use Bloomiss\Bloomiss;
+use Bloomiss\Component\Render\FormattableMarkup;
 use Bloomiss\Component\Utility\Xss;
 use Bloomiss\Core\Render\Markup;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\TerminableInterface;
-use Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -95,7 +97,6 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
             ini_set('session.cache_limiter', '');
             // Utilisez uniquement des cookies de session.
             ini_set('session.cookie_httponly', '1');
-            ini_set('xdebug.show_exception_trace', '1');
         }
         /*
             Définissez des paramètres régionaux sains,
@@ -166,21 +167,9 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
             'catch' => $catch,
         ]);*/
         //$this->__toString();
-        $errorHtml = [
-            '<html>',
-            '<head>', '</head>',
-            '<body>',
-            '<p>Entité spécial : &#201;</p><br>',
-            '<!-- Petit commentaire -->',
-            '<a href="javascript:alert(\'préout\');" attribut=\'test\' selected  encore_UnA-ttribut=test2 >Balise lien</a>',
-            'Prout',
-            '<script>alert(XSS);</script>',
-            '</body>',
-            '</html>'
-        ];
+
         
-        trigger_error(implode("\n", $errorHtml), E_USER_ERROR);
-        //throw new Exception("Revenir ici");
+        throw new Exception("Revenir ici");
         //var_dump($type, $request, $catch);
 
         return null;
@@ -222,6 +211,6 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
             'response' => $response,
         ]);
 
-        throw new Exception("Revenir ici");
+        trigger_error("Revenir ici", E_USER_ERROR);
     }
 }

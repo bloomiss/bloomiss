@@ -11,6 +11,7 @@
 use Bloomiss\Core\BloomissKernel;
 use Symfony\Component\HttpFoundation\Request;
 
+//define('MAINTENANCE_MODE', 1);
 $autoloader = require_once implode(DIRECTORY_SEPARATOR, [dirname(__DIR__), 'src', 'autoload.php']);
 
 $kernel = new BloomissKernel('dev', $autoloader);

@@ -2,8 +2,10 @@
 
 namespace Bloomiss;
 
+use Bloomiss\Core\Config\ImmutableConfig;
 use Bloomiss\Core\DependencyInjection\ContainerNotInitializedException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Wrapper de conteneur de service statique.
@@ -124,6 +126,21 @@ class Bloomiss
     {
         return static::$container !== null;
     }
+
+    /**
+     * Récupère un service du conteneur.
+     *
+     * Utilisez cette méthode si le service souhaité n'est pas l'un de ceux avec une méthode d'accès dédiée ci-dessous.
+     * Si elle est répertoriée ci-dessous,
+     * ces méthodes sont préférées car elles peuvent renvoyer des conseils de type utiles.
+     *
+     * @param string $idService L'ID du service à récupérer.
+     * @return mixed Le service spécifié.
+     */
+    public static function service(string $idService):mixed
+    {
+        return static::getContainer()->get($idService);
+    }
     /**
      * Indique si un service est défini dans le conteneur.
      *
@@ -134,5 +151,69 @@ class Bloomiss
     {
         //Vérifiez d'abord hasContainer() afin de toujours renvoyer un booléen.
         return static::hasContainer() && static::getContainer()->has($idService);
+    }
+
+    /**
+     * Indique s'il existe un objet de Request actuellement actif.
+     *
+     * @return boolean TRUE s'il y a un objet de requête actuellement actif, FALSE sinon.
+     */
+    public static function hasRaquest()
+    {
+        //Vérifiez d'abord hasContainer() afin de toujours renvoyer un booléen.
+        return static::hasContainer() &&
+        static::getContainer()->has('request_stack') &&
+        static::getContainer()->get('request_stack')->getCurrentRequest() !== null;
+    }
+
+    /**
+     * Récupère l'objet de requête actuellement utilisé.
+     *
+     * Remarque : L'utilisation de ce wrapper en particulier est particulièrement déconseillée.
+     * La plupart des codes ne devraient pas avoir besoin d'accéder directement à la demande.
+     * Cela signifie qu'il ne fonctionnera que lors du traitement d'une requête HTTP et
+     * nécessitera une modification ou un encapsulage spécial lorsqu'il sera exécuté à partir
+     * d'un outil de ligne de commande, de certains processeurs de file d'attente ou de tests automatisés.
+     *
+     * Si le code doit accéder à la requête, il est considérablement préférable d'enregistrer
+     * un objet auprès du conteneur de services et de lui attribuer une méthode setRequest()
+     * configurée pour s'exécuter lors de la création du service.
+     * De cette façon, l'objet de requête correct peut toujours être fourni par le conteneur
+     * et le service peut toujours être testé unitairement.
+     *
+     * Si cette méthode doit être utilisée, n'enregistrez jamais l'objet de requête renvoyé.
+     * Cela peut conduire à des incohérences car l'objet de la requête est volatile
+     * et peut changer à différents moments, comme lors d'une sous-requête.
+     *
+     * @return Request L'objet Request actuellement active.
+     */
+    public static function request():Request
+    {
+        return static::getContainer()->get('request_stack')->getCurrentRequest();
+    }
+
+    /**
+     * Récupère un objet de configuration.
+     * Il s'agit du principal point d'entrée de l'API de configuration.
+     * Appel:
+     *  @code
+     *      \Drupal::config('book.admin')
+     *  @endcode
+     * Renverra un objet de configuration que le module Book
+     * peut utiliser pour lire ses paramètres administratifs.
+     *
+     * @param string $name
+     *  Le nom de l'objet de configuration à récupérer, qui correspond généralement à un fichier de configuration.
+     * Pour
+     *  @code
+     *      \Drupal::config('book.admin')
+     * @endcode,
+     * l'objet de configuration renvoyé contiendra le contenu du fichier de configuration book.admin.
+     *
+     * @return ImmutableConfig un objet de configuration immutable
+     */
+    public static function config(string $name):ImmutableConfig
+    {
+        return static::getContainer()->get('config.factory')->get($name);
     }
 }
