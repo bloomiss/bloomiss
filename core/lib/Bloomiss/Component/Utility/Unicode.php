@@ -9,8 +9,6 @@ namespace Bloomiss\Component\Utility;
  */
 class Unicode
 {
-    use LoaderTrait;
-   
     /**
      * Vérifie si une chaîne est au format UTF-8 valide.
      *

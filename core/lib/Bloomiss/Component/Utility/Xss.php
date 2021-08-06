@@ -11,7 +11,6 @@ use stdClass;
  */
 class Xss
 {
-    use LoaderTrait;
     /**
      * Liste de balises html autorisée par filterAdmin()
      *
@@ -60,7 +59,7 @@ class Xss
 
         // Fonctionne uniquement sur des chaînes UTF-8 valides.
         // Cela est nécessaire pour éviter les problèmes de scripts intersites sur Internet Explorer 6.
-        if (!static::load()->Unicode::validateUtf8($string)) {
+        if (!loadFactory()->Unicode::validateUtf8($string)) {
             return '';
         }
 
@@ -343,7 +342,8 @@ class Xss
                 'att' => '%s="%s"'
             ],
         ];
-        $urlHelper = static::load()->UrlHelper;
+        $urlHelper = loadFactory()->UrlHelper;
+        var_dump($urlHelper);
         foreach ($regexs as $regex) {
             if (preg_match($regex['match'], $attributes, $match)) {
                 $value = $params->skipProtFiltering ? $match[1] :

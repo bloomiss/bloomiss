@@ -31,7 +31,7 @@ trait MarkupTrait
             return '';
         }
 
-        $safeString = (method_exists(static::class, 'load')) ? static::load() : new static();
+        $safeString = loadFactory()->Markup;
         $safeString->string = $string;
         return $safeString;
     }

@@ -4,7 +4,6 @@ namespace Bloomiss\Core\Render;
 
 use Bloomiss\Component\Render\MarkupInterface;
 use Bloomiss\Component\Render\MarkupTrait;
-use Bloomiss\Component\Utility\LoaderTrait;
 use Countable;
 
 /**
@@ -18,6 +17,5 @@ use Countable;
  */
 final class Markup implements MarkupInterface, Countable
 {
-    use LoaderTrait;
     use MarkupTrait;
 }

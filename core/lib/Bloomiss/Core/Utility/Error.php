@@ -151,7 +151,7 @@ class Error
                     $call['args'][] = ucfirst(gettype($arg));
                     if (is_scalar($arg)) {
                         $call['args'][] = is_string($arg) ?
-                         sprintf("'%s'", loadFactory()->get('xss')::filter($arg)) :
+                         sprintf("'%s'", loadFactory()->Xss::filter($arg)) :
                          $arg;
                     }
                 }

@@ -54,7 +54,7 @@ function bloomiss()
 
 function bloomissErrorHandler(int $errorLevel, string $message, ?string $filename = null, ?int $line = null) : void
 {
-    loadFactory()->get('handleError')::bloomissErrorHandlerReal($errorLevel, $message, $filename, $line);
+    loadFactory()->HandleError::bloomissErrorHandlerReal($errorLevel, $message, $filename, $line);
 }
 
 /**
@@ -82,9 +82,9 @@ function bloomissExceptionHandler(Exception|Throwable $exception) : void
     }*/
     try {
         //Consignez le message au watchdog et renvoyez une page d'erreur à l'utilisateur.
-        $exceptionDecoder = loadFactory()->get('utilityError')::decodeException($exception);
-        loadFactory()->get('handleError')::fatalOn();
-        loadFactory()->get('handleError')::logError($exceptionDecoder);
+        $exceptionDecoder = loadFactory()->utilityError::decodeException($exception);
+        loadFactory()->handleError::fatalOn();
+        loadFactory()->handleError::logError($exceptionDecoder);
     } catch (\Throwable $error) {
         bloomissExceptionHandlerAdditionnel($exception, $error);
     }
@@ -103,15 +103,15 @@ function bloomissExceptionHandlerAdditionnel($exception, $exception2)
 {
     // Une autre exception non interceptée a été levée lors de la gestion de la première.
     // Si nous affichons des erreurs, alors faites-le sans qu'une autre exception non interceptée ne soit levée.
-    if (loadFactory()->get('handleError')::errorDisplayable()) {
+    if (loadFactory()->handleError::errorDisplayable()) {
         print '<h1>Exception non interceptée supplémentaire levée lors de la gestion de l\'exception.</h1>';
         print sprintf(
             '<h2>Original</h2><p>%s</p>',
-            loadFactory()->get('utilityError')::renderExceptionSafe($exception)
+            loadFactory()->utilityError::renderExceptionSafe($exception)
         );
         print sprintf(
             '<h2>Additionnal</h2><p>%s</p>',
-            loadFactory()->get('utilityError')::renderExceptionSafe($exception2)
+            loadFactory()->utilityError::renderExceptionSafe($exception2)
         );
     }
 }

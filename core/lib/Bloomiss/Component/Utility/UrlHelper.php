@@ -7,7 +7,6 @@ namespace Bloomiss\Component\Utility;
  */
 class UrlHelper
 {
-    use LoaderTrait;
     /**
      * Liste des protocol autorisés
      *
@@ -24,7 +23,7 @@ class UrlHelper
     public static function filterBadProtocol(string $string):string
     {
         //Obtenez la représentation en texte brut de la valeur de l'attribut (c'est-à-dire sa signification).
-        $html = static::load()->Html;
+        $html = loadFactory()->Html;
         $string = $html::decodeEntities($string);
         return $html::escape(static::stripDangerousProtocols($string));
     }

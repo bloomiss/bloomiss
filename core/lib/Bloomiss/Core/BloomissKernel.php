@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\TerminableInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\InputBag;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * La classe BloomissKernel est le cœur de Bloomiss lui-même.
@@ -33,6 +35,39 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
 {
 
     /**
+     * Si les services essentiels ont été configurés correctement par preHandle().
+     *
+     * @var boolean
+     */
+    private $prepared = false;
+
+    /**
+     * L'environnement, ex: 'testing', 'install'
+     *
+     * @var string
+     */
+    private $environment;
+    /**
+     * L'objet Chargeur de classe
+     *
+     * @var \Composer\Autoload\ClassLoader
+     */
+    private $classLoader;
+
+    /**
+     * Si le conteneur peut être vidé.
+     *
+     * @var bool
+     */
+    private $allowDumping;
+
+    /**
+     * La racine de l'application
+     *
+     * @var string
+     */
+    private $root;
+    /**
      * Si l'environnement PHP a été initialisé.
      *
      * Cette phase héritée ne peut être démarrée qu'une seule fois
@@ -43,11 +78,30 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
      *
      * @var boolean
      */
-    protected static $isEnvInitialized = false;
+    private static $isEnvInitialized = false;
 
-    public function __construct()
+    /**
+     * Construit un objet de la classe BloomissKernel.
+     *
+     * @param string $environment
+     *      Chaîne indiquant l'environnement, par ex. 'prod' ou 'dev'.
+     *
+     * @param  $classLoader
+     *      Le chargeur de classe. Normalement \Composer\Autoload\ClassLoader,
+     *      tel qu'inclus par le contrôleur frontal, mais peut également être décoré.
+     * @param string $appRoot
+     *      (optionel) Chemin d'accès à la racine de l'application sous forme de chaîne.
+     *      Si elle n'est pas fournie, la racine de l'application sera calculée.
+     */
+    public function __construct($environment, $classLoader, $appRoot = null)
     {
-        //throw new Exception('Reveni à la fonction __construct()', 1);
+        $this->environment = $environment;
+        $this->classLoader = $classLoader;
+        $this->allowDumping = true;
+        if ($appRoot === null) {
+            $appRoot = static::guessApplicationRoot();
+        }
+        $this->root = $appRoot;
     }
     // -------------------------------------------------------------------------------------------------------------- //
     //                                                                                                                //
@@ -135,6 +189,131 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
     }
     // -------------------------------------------------------------------------------------------------------------- //
     //                                                                                                                //
+    //          Fontion implémenté par l'interface - Bloomiss\Core\BloomissKernelInterface                            //
+    //                                                                                                                //
+    // -------------------------------------------------------------------------------------------------------------- //
+
+    /**
+     * {@inheritDoc}
+     */
+    public function boot():BloomissKernel
+    {
+        trigger_error("Revenir ici");
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function shutdown():void
+    {
+        throw new Exception("Reveni à la fonction shutdown()", 1);
+    }
+        
+    /**
+     * {@inheritDoc}
+     */
+    public function discoverServiceProviders(): array
+    {
+        throw new Exception("Reveni à la fonction discoverServiceProviders(): array", 1);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function getSerivceProviders(string $origin):array
+    {
+        var_dump(['origin'=> $origin]);
+        throw new Exception("Reveni à la fonction getSerivceProvidersarray", 1);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function getContainer(): ContainerInterface
+    {
+        throw new Exception("Reveni à la fonction getContainer(): ContainerInterface", 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCachedContainerDefinition(): array|null
+    {
+        throw new Exception("Reveni à la fonction getCachedContainerDefinition(): array|null", 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setSitePath(string $path) : void
+    {
+        var_dump(["path" => $path]);
+        throw new Exception("Reveni à la fonction setSitePath(string ) : void", 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSitePath() : string
+    {
+        throw new Exception('Reveni à la fonction getSitePath() : string', 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAppRoot() : string
+    {
+        throw new Exception('Reveni à la fonction getAppRoot() : string', 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function updateModules(array $moduleList, array $moduleFilename = []) : void
+    {
+        var_dump([
+            'moduleList' => $moduleList,
+            'moduleFilename' => $moduleFilename,
+        ]);
+        throw new Exception('Reveni à la fonction updateModules(array $moduleList, array $moduleFilename = [])', 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function rebuildContainer() : ContainerInterface
+    {
+        throw new Exception('Reveni à la fonction rebuildContainer() : ContainerInterface', 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function invalideContainer() : void
+    {
+        throw new Exception('Reveni à la fonction invalideContainer() : void', 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function preHandle(Request $requete)
+    {
+        var_dump(['requete' => $requete]);
+        throw new Exception('Reveni à la fonction preHandle(Request $requete)', 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function loadLegacyIncludes() : void
+    {
+        throw new Exception('Reveni à la fonction loadLegacyIncludes() : void', 1);
+    }
+    // -------------------------------------------------------------------------------------------------------------- //
+    //                                                                                                                //
     //          Fontion implémenté par l'interface - Symfony\Component\HttpKernel\HttpKernelInterface                 //
     //                                                                                                                //
     // -------------------------------------------------------------------------------------------------------------- //
@@ -160,25 +339,24 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
         //Assurez-vous que les variables d'environnement PHP sont saines.
         static::bootEnvironment();
 
-        //code here
-        /*var_dump([
-            'request' => $request,
-            'type' => $type,
-            'catch' => $catch,
-        ]);*/
-        //$this->__toString();
+        try {
+            $this->initializeSettings($request);
 
-        
-        throw new Exception("Revenir ici");
-        //var_dump($type, $request, $catch);
+            $response = new Response();
+        } catch (Exception $e) {
+            if ($catch) {
+                throw $e;
+            }
 
-        return null;
+            $response = $this->handleException($e, $request, $type);
+        }
+
+        //Adaptez les en-têtes de réponse à la requête en cours.
+        $response->prepare($request);
+
+        return $response;
     }
 
-    public function __toString()
-    {
-        trigger_error('Test erreur to string', E_USER_ERROR);
-    }
     // -------------------------------------------------------------------------------------------------------------- //
     //                                                                                                                //
     //     Fontion implémenté par l'interface - Symfony\Component\DependencyInjection\ContainerAwareInterface         //
@@ -206,11 +384,138 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
      */
     public function terminate(Request $request, Response $response)
     {
-        var_dump([
+        /*var_dump([
             'request' => $request,
             'response' => $response,
-        ]);
+        ]);*/
 
-        trigger_error("Revenir ici", E_USER_ERROR);
+        trigger_error("Revenir ici");
+    }
+
+
+    // -------------------------------------------------------------------------------------------------------------- //
+    //                                                                                                                //
+    //                                              Méthode protected                                                 //
+    //                                                                                                                //
+    // -------------------------------------------------------------------------------------------------------------- //
+
+    // -------------------------------------------------------------------------------------------------------------- //
+    //                                                                                                                //
+    //                                               Méthode private                                                  //
+    //                                                                                                                //
+    // -------------------------------------------------------------------------------------------------------------- //
+
+    // -------------------------------------------------------------------------------------------------------------- //
+    //                                                                                                                //
+    //                                          Méthode static protected                                              //
+    //                                                                                                                //
+    // -------------------------------------------------------------------------------------------------------------- //
+
+    // -------------------------------------------------------------------------------------------------------------- //
+    //                                                                                                                //
+    //                                          Méthode static private                                                //
+    //                                                                                                                //
+    // -------------------------------------------------------------------------------------------------------------- //
+    
+    /**
+     * Renvoie le répertoire du site approprié pour une requête.
+     *
+     * Une fois le noyau créé, BloomissKernelInterface::getSitePath() est préférable car il obtient le résultat
+     * mis en cache statiquement de cette méthode. Les répertoires de site contiennent tout le code spécifique au site.
+     * Cela inclut settings.php pour la configuration de niveau d'amorçage, les magasins de configuration de fichiers,
+     * le stockage de fichiers publics et les modules et thèmes spécifiques au site.
+     *
+     * Un fichier nommé sites.php doit être présent dans le répertoire sites pour le multisite.
+     * S'il n'existe pas, alors 'sites/default' sera utilisé.
+     *
+     * Trouve un fichier de répertoire de site correspondant en supprimant le nom d'hôte du site Web de gauche à droite
+     * et le nom de chemin de droite à gauche. Par défaut, le répertoire doit contenir un fichier 'settings.php' pour
+     * qu'il corresponde. Si le paramètre $require_settings est défini sur FALSE, alors un répertoire sans fichier
+     * 'settings.php' correspondra également. Le premier fichier de configuration trouvé sera utilisé et les autres
+     * seront ignorés. Si aucun fichier de configuration n'est trouvé, renvoie une valeur par défaut 'sites/default'.
+     * Voir default.settings.php pour des exemples sur la façon dont l'URL est convertie en répertoire.
+     *
+     * Le fichier sites.php dans le répertoire sites peut définir des alias dans un tableau associatif nommé $sites.
+     * Le tableau est écrit au format '<port>.<domain>.<path>' => 'directory'.
+     * Par exemple, pour créer un alias de répertoire pour https://www.drupal.org:8080/mysite/test
+     * dont le fichier de configuration se trouve dans sites/example.com, le tableau doit être défini comme :
+     * @code
+     * $sites = array(
+     *   '8080.www.drupal.org.mysite.test' => 'example.com',
+     *  );
+     * @endcode
+     *
+     * @param Request $request
+     *      La requête actuell
+     *
+     * @param string|null $appRoot
+     *      (optionnel) Chemin d'accès à la racine de l'application sous forme de chaîne.
+     *      Si elle n'est pas fournie, la racine de l'application sera calculée.
+     *
+     * @param bool $requireSetting
+     *      Seuls les répertoires avec un fichier settings.php existant seront reconnus.
+     *      La valeur par défaut est TRUE. Lors de l'installation initiale,
+     *      ce paramètre est défini sur FALSE afin que Bloomiss puisse détecter un répertoire
+     *      correspondant, puis y créer un nouveau fichier settings.php.
+     *
+     * @return string
+     *      Le chemin du répertoire correspondant.
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     *      Dans le cas où le nom de l'hôte dans la requête est invalide.
+     */
+    private static function findSitePath(Request $request, ?string $appRoot = null):string
+    {
+        //Initialiser la variable 'bool' requireSetting
+        $requireSetting = (func_num_args() == 3) ? func_get_arg(2) : true;
+        //var_dump();
+        var_dump($requireSetting);
+        trigger_error('Revenir à la fonction nom_fonction()');
+        return '';
+    }
+    /**
+     * Convertit une exception en réponse.
+     *
+     * @param Exception $exception
+     *      Une exception
+     *
+     * @param Request   $request
+     *      Un objet de la classe Request
+     *
+     * @param integer   $type
+     *      Le type de la requête (un de HttpKernelInterface::MAIN_REQUEST ou HttpKernelInterface::SUB_REQUEST)
+     *
+     * @return Response
+     *      Un objet de la classe Response
+     * @throws Exception
+     *      Si l'exception transmise ne peut pas être transformée en réponse.
+     */
+    private function handleException(Exception $exception, Request $request, int $type):Response
+    {
+        $response = new Response();
+        var_dump([
+            'e' => $exception,
+            'request' => $request,
+            'type' => $type,
+        ]);
+        trigger_error('Revenir ici', E_USER_ERROR);
+
+        return $response;
+    }
+
+    /**
+     * Localisez le chemin du site et initialisez le singleton des paramètres.
+     *
+     * @param Request $request
+     *      La requete actuel
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     *      //Au cas où le nom d'hôte dans la demande n'est pas approuvé.
+     */
+    private function initializeSettings(Request $request):void
+    {
+        static::findSitePath($request);
+        //var_dump($request);
+        trigger_error('Revenir ici');
     }
 }

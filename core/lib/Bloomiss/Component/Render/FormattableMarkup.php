@@ -192,7 +192,7 @@ class FormattableMarkup implements MarkupInterface, Countable
                 case ':':
                     //Supprimez les protocoles d'URL qui peuvent être des vecteurs XSS.
                     trigger_error("Revenir ici", E_USER_ERROR);
-                    $value = loadFactory()->get('UrlHelper')::stripDangerousProtocols($value);
+                    $value = loadFactory()->UrlHelper::stripDangerousProtocols($value);
                     // Échappement inconditionnel, sans vérifier si la valeur est une instance de
                     // \Bloomiss\Component\Render\MarkupInterface. Cela force les caractères qui ne sont pas sûrs
                     // à utiliser dans un attribut HTML "href" à être codés. Si un appelant souhaite transmettre
@@ -201,7 +201,7 @@ class FormattableMarkup implements MarkupInterface, Countable
                     // avant de le transmettre en tant que valeur d'espace réservé de ce type.
                     // @todo Ajoutez des conseils et des avertissements plus forts.
                     // https://www.drupal.org/node/2569041.
-                    $args[$key] = loadFactory()->get('html')::escape($value);
+                    $args[$key] = loadFactory()->Html::escape($value);
                     break;
 
                 case '%':
@@ -239,6 +239,6 @@ class FormattableMarkup implements MarkupInterface, Countable
     {
         return $value instanceof MarkupInterface ?
         (string) $value :
-        loadFactory()->get('html')::escape($value);
+        loadFactory()->Html::escape($value);
     }
 }

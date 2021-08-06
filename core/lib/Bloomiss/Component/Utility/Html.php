@@ -7,7 +7,6 @@ namespace Bloomiss\Component\Utility;
  */
 class Html
 {
-    use LoaderTrait;
     /**
      * Décode toutes les entités HTML, y compris les entités numériques, en octets UTF-8 normaux.
      *
