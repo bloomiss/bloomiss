@@ -2,17 +2,15 @@
 
 namespace Bloomiss\Core;
 
-use Bloomiss\Bloomiss;
-use Bloomiss\Component\Render\FormattableMarkup;
-use Bloomiss\Component\Utility\Xss;
-use Bloomiss\Core\Render\Markup;
+use Bloomiss\Core\Installer\InstallerRedirectTrait;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\TerminableInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\InputBag;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use UnexpectedValueException;
 
 /**
  * La classe BloomissKernel est le cœur de Bloomiss lui-même.
@@ -33,6 +31,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 class BloomissKernel implements BloomissKernelInterface, TerminableInterface
 {
+    use InstallerRedirectTrait;
 
     /**
      * Si les services essentiels ont été configurés correctement par preHandle().
@@ -334,7 +333,7 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
      * @throws \Exception Lorsqu'une exception se produit pendant le traitement
      * @SuppressWarnings(BooleanArgumentFlag)
      */
-    public function handle(Request $request, int $type = self::MAIN_REQUEST, bool $catch = true)
+    public function handle(Request $request, int $type = self::MAIN_REQUEST, bool $catch = false)
     {
         //Assurez-vous que les variables d'environnement PHP sont saines.
         static::bootEnvironment();
@@ -466,13 +465,62 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
      */
     private static function findSitePath(Request $request, ?string $appRoot = null):string
     {
+        if (static::validateHostnname($request) === false) {
+            throw new BadRequestException();
+        }
+        throw new BadRequestException();
         //Initialiser la variable 'bool' requireSetting
         $requireSetting = (func_num_args() == 3) ? func_get_arg(2) : true;
+
         //var_dump();
-        var_dump($requireSetting);
+        var_dump(static::validateHostnname($request));
         trigger_error('Revenir à la fonction nom_fonction()');
         return '';
     }
+
+    /**
+     * Valide la longeur de l'hote.
+     *
+     * @param string $host
+     *      Le nom d'hote
+     *
+     * @return bool
+     *      TRUE si la longeur est approprié, FALSE sinon.
+     */
+    private static function validateHostnameLength(string $host):bool
+    {
+        //Limitez la longueur du nom d'hôte à 1000 octets pour empêcher les attaques DoS avec des noms d'hôte longs
+        return strlen($host) <= 1000
+        //Limitez le nombre de sous-domaines et de séparateurs de ports
+        //pour empêcher les attaques DoS dans findSitePath().
+        && substr_count($host, '.') <= 100
+        && substr_count($host, ':') <= 100;
+    }
+    /**
+     * Valide le nom d'hôte fourni à partir de la requête HTTP.
+     *
+     * @param Request $request
+     *      L'objet de la classe Request
+     * @return bool
+     *      TRUE si le nom de l'hote est valide, FALSE sinon.
+     */
+    private static function validateHostnname(Request $request):bool
+    {
+        // $request->getHost() peut lever une UnexpectedValueException
+        // s'il détecte un nom d'hôte incorrect, mais il ne valide pas la longueur.
+        try {
+            $httpHost = $request->getHost();
+        } catch (UnexpectedValueException $e) {
+            return false;
+        }
+
+        if (static::validateHostnameLength($httpHost) === false) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Convertit une exception en réponse.
      *
@@ -493,14 +541,18 @@ class BloomissKernel implements BloomissKernelInterface, TerminableInterface
     private function handleException(Exception $exception, Request $request, int $type):Response
     {
         $response = new Response();
-        var_dump([
+        /*var_dump([
             'e' => $exception,
             'request' => $request,
             'type' => $type,
         ]);
-        trigger_error('Revenir ici', E_USER_ERROR);
+        trigger_error('Revenir ici', E_USER_ERROR);*/
 
-        return $response;
+        if ($exception instanceof HttpExceptionInterface) {
+            trigger_error('Revenir ici');
+        }
+
+        throw $exception;
     }
 
     /**

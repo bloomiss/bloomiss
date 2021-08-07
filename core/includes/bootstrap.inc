@@ -82,9 +82,9 @@ function bloomissExceptionHandler(Exception|Throwable $exception) : void
     }*/
     try {
         //Consignez le message au watchdog et renvoyez une page d'erreur à l'utilisateur.
-        $exceptionDecoder = loadFactory()->utilityError::decodeException($exception);
-        loadFactory()->handleError::fatalOn();
-        loadFactory()->handleError::logError($exceptionDecoder);
+        $exceptionDecoder = loadFactory()->UtilityError::decodeException($exception);
+        loadFactory()->HandleError::fatalOn();
+        loadFactory()->HandleError::logError($exceptionDecoder);
     } catch (\Throwable $error) {
         bloomissExceptionHandlerAdditionnel($exception, $error);
     }
@@ -103,15 +103,15 @@ function bloomissExceptionHandlerAdditionnel($exception, $exception2)
 {
     // Une autre exception non interceptée a été levée lors de la gestion de la première.
     // Si nous affichons des erreurs, alors faites-le sans qu'une autre exception non interceptée ne soit levée.
-    if (loadFactory()->handleError::errorDisplayable()) {
+    if (loadFactory()->HandleError::errorDisplayable()) {
         print '<h1>Exception non interceptée supplémentaire levée lors de la gestion de l\'exception.</h1>';
         print sprintf(
             '<h2>Original</h2><p>%s</p>',
-            loadFactory()->utilityError::renderExceptionSafe($exception)
+            loadFactory()->UtilityError::renderExceptionSafe($exception)
         );
         print sprintf(
             '<h2>Additionnal</h2><p>%s</p>',
-            loadFactory()->utilityError::renderExceptionSafe($exception2)
+            loadFactory()->UtilityError::renderExceptionSafe($exception2)
         );
     }
 }
